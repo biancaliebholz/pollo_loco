@@ -1,19 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./styel.css">
-    <title>El Pollo Loco</title>
-    <script src="./js/game.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>El Pollo Loco</title>
+  <link rel="stylesheet" href="styel.css" />
 </head>
-<body onload="init()">
+<body>
+  <h1>El pollo loco</h1>
 
-    <h1>El pollo loco</h1>
+  <canvas id="canvas" width="720" height="480"></canvas>
 
-    <canvas width="720" height="480">
+  <script src="./models/keyboard.class.js"></script>
+  <script src="./models/movable-object.class.js"></script>
+  <script src="./models/background-layer.class.js"></script>
+  <script src="./models/chicken.class.js"></script>
+  <script src="./models/character.class.js"></script>
+  <script src="./models/world.class.js"></script>
 
-    </canvas>
-
+  <script src="./js/game.js"></script>
+  <script src="./js/script.js"></script>
 </body>
 </html>
