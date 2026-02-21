@@ -1,15 +1,10 @@
-
 let canvas;
-let ctx;
-let character = new Image();
-
+let world 
+//let keyboard = new Keyboard();
 
 function init() {
     canvas = document.getElementById('canvas');
-    ctx = canvas.getCotext('2d');
+    world = new World(canvas);
+   
 
-    character.src ='../assets/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-1.png';
-
-    setTimeout( function() )
-    ctx.drawImage(character, 20, 20, 50, 150);
 }
