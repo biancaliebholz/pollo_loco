@@ -1,7 +1,10 @@
 class Keyboard {
   LEFT = false;
   RIGHT = false;
-
+  UP = false;
+  DOWN = false;
+  SPACE = false;
+  
   constructor() {
     window.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowLeft') this.LEFT = true;
