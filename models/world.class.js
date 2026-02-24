@@ -1,60 +1,93 @@
 class World {
-    character = new Character();
-    enemies = [
-     new Chicken(),
-     new Chicken(),
-     new Chicken(),
-  ];
-
-    clouds = [
-     new Cloud()
-  ];
-  BackgroundLayer = [
-     new BackgroundLayer('assets/img_pollo_locco/img/5_background/layers/air.png', 0),
-    new BackgroundLayer('assets/img_pollo_locco/img/5_background/layers/3_third_layer/1.png',0),
-    new BackgroundLayer('assets/img_pollo_locco/img/5_background/layers/2_second_layer/1.png',0),
-    new BackgroundLayer('assets/img_pollo_locco/img/5_background/layers/1_first_layer/1.png', 0)
-   
-  ];
+  character = new Character();
+  level = level1;
   canvas;
   ctx;
   keyboard;
+  camera_x = 0;
 
-constructor(canvas, keyboard){
-  this.ctx = canvas.getContext('2d');
-  this.canvas = canvas;
-  this.keyboard = keyboard;
-  this.draw();
-  this.setWorld();
-}
+  constructor(canvas, keyboard) {
+    this.ctx = canvas.getContext('2d');
+    this.canvas = canvas;
+    this.keyboard = keyboard;
 
-setWorld(){
-  this.character.world = this;
-}
+    this.setWorld();
+    this.draw();
+  }
 
+  setWorld() {
+    this.character.world = this;
+  }
 
-draw(){
-  this.ctx.clearRect(0, 0, this,canvas.width, this.canvas.height);
-  this.addObjectsToMap(this.BackgroundLayer);
-  this.addToMap(this.character);
-  this.addObjectsToMap(this.clouds);
-  this.addObjectsToMap(this.enemies);
+  draw() {
+    // ✅ FIX: Transform jedes Frame zurücksetzen, damit translate/scale nicht akkumuliert
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
 
+    // ✅ FIX: clearRect korrekt
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-  let self = this;
-  requestAnimationFrame(function(){
-    self.draw();
+    // (Optional später) Kamera dem Character folgen lassen – wenn du willst:
+    // this.camera_x = -this.character.x + 100;
+
+    // Kamera anwenden
+    this.ctx.translate(this.camera_x, 0);
+
+    // ✅ NEU: Background-Looping updaten (bevor gezeichnet wird)
+    this.loopBackground();
+
+    // Zeichnen in deiner Reihenfolge
+    this.addObjectsToMap(this.level.BackgroundLayer);
+    this.addToMap(this.character);
+    this.addObjectsToMap(this.level.clouds);
+    this.addObjectsToMap(this.level.enemies);
+
+    requestAnimationFrame(() => this.draw());
+  }
+loopBackground() {
+  const viewLeft = -this.camera_x;                 // linke Sichtkante in Welt-Koordinaten
+  const viewRight = viewLeft + this.canvas.width;  // rechte Sichtkante
+
+  this.level.BackgroundLayer.forEach(layer => {
+    if (layer.x + layer.width < viewLeft) {
+      layer.x += layer.width * 2;
+    }
+    if (layer.x > viewRight) {
+      layer.x -= layer.width * 2;
+    }
   });
-
- }
-addObjectsToMap(objects){
-  objects.forEach(o =>{
-    this.addToMap(o);
-  });
 }
 
-addToMap(mo){
-  this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
- }
-}
+  addObjectsToMap(objects) {
+    objects.forEach(o => {
+      this.addToMap(o);
+    });
+  }
 
+  addToMap(mo) {
+    if (mo.otherDirection) {
+      this.flipImage(mo);
+    }
+
+    this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
+
+    if (mo.otherDirection) {
+      this.flipImageBack(mo);
+    }
+  }
+
+  flipImage(mo) {
+    this.ctx.save();
+
+    // ✅ FIX: mo.width statt mo.img.width (img.width kann 0 sein, wenn noch nicht geladen)
+    this.ctx.translate(mo.width, 0);
+    this.ctx.scale(-1, 1);
+
+    // Tutorial-Logik beibehalten
+    mo.x = mo.x * -1;
+  }
+
+  flipImageBack(mo) {
+    mo.x = mo.x * -1;
+    this.ctx.restore();
+  }
+}
