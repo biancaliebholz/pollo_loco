@@ -68,7 +68,8 @@ loopBackground() {
       this.flipImage(mo);
     }
 
-    this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
+   mo.draw(this.ctx);
+   mo.drawFrame(this.ctx);
 
     if (mo.otherDirection) {
       this.flipImageBack(mo);
@@ -77,12 +78,8 @@ loopBackground() {
 
   flipImage(mo) {
     this.ctx.save();
-
-    // ✅ FIX: mo.width statt mo.img.width (img.width kann 0 sein, wenn noch nicht geladen)
     this.ctx.translate(mo.width, 0);
     this.ctx.scale(-1, 1);
-
-    // Tutorial-Logik beibehalten
     mo.x = mo.x * -1;
   }
 
