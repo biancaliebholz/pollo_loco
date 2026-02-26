@@ -6,7 +6,8 @@ class Character extends MovableObject {
   jumpFrame = 0;
   lastMove = 0;
   deadFrame = 0;
-deadAnimationStarted = false;
+  deadAnimationStarted = false;
+  idleTick = 0;
 
   IMAGES_WALKING = [
     'assets/img_pollo_locco/img/2_character_pepe/2_walk/W-21.png',
@@ -81,66 +82,65 @@ deadAnimationStarted = false;
     this.loadImages(this.IMAGES_IDLE);
     this.loadImages(this.IMAGES_LONG_IDLE);
     this.loadImages(this.IMAGES_HURT);
-    this.loadImages(this.IMAGES_DEAD); // ✅ geändert: war this.DEAD (falsch)
+    this.loadImages(this.IMAGES_DEAD); 
 
-    this.lastMove = new Date().getTime(); // ✅ geändert
+    this.lastMove = new Date().getTime(); 
     this.applyGravity();
     this.animate();
   }
 
   animate() {
-    // MOVEMENT / INPUT
+  
     setInterval(() => {
+      if (this.isDead()) return; // ✅ NEU
       if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
         this.moveRight();
         this.otherDirection = false;
-        this.lastMove = new Date().getTime(); // ✅ geändert
+        this.lastMove = new Date().getTime(); 
       }
 
       if (this.world.keyboard.LEFT && this.x > 0) {
         this.moveLeft();
         this.otherDirection = true;
-        this.lastMove = new Date().getTime(); // ✅ geändert
+        this.lastMove = new Date().getTime(); 
       }
 
       if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-        this.jump(); // benutzt MovableObject.jump()
+        this.jump(); 
       }
 
       this.world.camera_x = -this.x + 110;
     }, 1000 / 60);
 
-    // ANIMATIONS
-    setInterval(() => {
-      if (this.isDead()) {
-        this.playAnimation(this.IMAGES_DEAD);
-        return;
-      }
 
-      if (this.isHurt()) { // ✅ geändert: war fälschlich isAboveGround()
+    setInterval(() => {
+if (this.isDead()) {
+  this.playDeadOnce(); 
+  return;
+}
+
+      if (this.isHurt()) { 
         this.playAnimation(this.IMAGES_HURT);
         return;
       }
 
       if (this.isAboveGround()) {
-        this.playJumpOnce(); // ✅ geändert: Jump nicht loopen
+        this.playJumpOnce();
         return;
       }
 
-      // ✅ geändert: sobald gelandet -> Jump-Status zurücksetzen
       this.isJumping = false;
       this.jumpFrame = 0;
 
       if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
         this.playAnimation(this.IMAGES_WALKING);
       } else {
-        this.playIdleOrLongIdle(); // ✅ geändert
+        this.playIdleOrLongIdle(); 
       }
     }, 50);
   }
 
   playJumpOnce() {
-    // ✅ geändert: Jump Frames einmal durch, letzter Frame bleibt bis Landung
     if (!this.isJumping) return;
 
     let i = Math.min(this.jumpFrame, this.IMAGES_JUMPING.length - 1);
@@ -152,10 +152,32 @@ deadAnimationStarted = false;
     }
   }
 
-   playIdleOrLongIdle() {
-    // ✅ geändert: nach 5s nichts tun -> long idle
-    let seconds = (new Date().getTime() - this.lastMove) / 1000;
-    if (seconds > 5) this.playAnimation(this.IMAGES_LONG_IDLE);
-    else this.playAnimation(this.IMAGES_IDLE);
+ playIdleOrLongIdle(){
+  let seconds = (new Date().getTime() - this.lastMove)/1000;
+
+  if(seconds > 5){
+    if(this.idleTick++ % 4 == 0) 
+      this.playAnimation(this.IMAGES_LONG_IDLE);
   }
+  else{
+    if(this.idleTick++ % 3 == 0) 
+      this.playAnimation(this.IMAGES_IDLE);
+  }
+}
+
+playDeadOnce() {
+  if (!this.deadAnimationStarted) {
+    this.deadAnimationStarted = true;
+    this.deadFrame = 0;
+  }
+
+  let i = Math.min(this.deadFrame, this.IMAGES_DEAD.length - 1);
+  let path = this.IMAGES_DEAD[i];
+  let img = this.imageCache[path];
+  if (img) this.img = img;
+
+  if (this.deadFrame < this.IMAGES_DEAD.length - 1) {
+    this.deadFrame++;
+  }
+}
 }

@@ -8,99 +8,97 @@ class MovableObject {
   currentImage = 0;
   speed = 0.15;
   otherDirection = false;
+
   speedY = 0;
   acceleration = 3.0;
-  energy = 100; 
+
+  energy = 100;
   lastHit = 0;
-  
-  applyGravity(){
-    setInterval(() => { 
-      if(this.isAboveGround() || this.speedY > 0) {
+
+  groundY = 160;      
+  jumpPower = 30;       
+
+  applyGravity() {
+    setInterval(() => {
+      if (this.isAboveGround() || this.speedY > 0) {
         this.y -= this.speedY;
         this.speedY -= this.acceleration;
+
+    
+        if (this.y > this.groundY) {
+          this.y = this.groundY;
+          this.speedY = 0;
+        }
       }
-    }, 1000 / 25 );
+    }, 1000 / 25);
   }
 
- isAboveGround(){
-  return this.y < 160;
- }
+  isAboveGround() {
+    return this.y < this.groundY;
+  }
 
   loadImage(path) {
     this.img = new Image();
     this.img.src = path;
   }
 
-  draw(ctx){
-    ctx.drawImage(this.img, this.x, this.y, this.width, this.height)
-  }
-  drawFrame(ctx){
-    if(this instanceof Character || this instanceof Chicken){
-    ctx.beginPath();
-    ctx.lineWidth = "5";
-    ctx.strokeStyle = "red";
-    ctx.rect(this.x, this.y, this.width, this.height);
-    ctx.stroke();
-    }
+  loadImages(arr) {
+    arr.forEach((path) => {
+      let img = new Image();
+      img.src = path;
+      this.imageCache[path] = img;
+    });
   }
 
-isColliding(mo) {
-  return this.x + this.width > mo.x &&
-         this.y + this.height > mo.y &&
-         this.x < mo.x + mo.width &&
-         this.y < mo.y + mo.height;
-}
+  draw(ctx) {
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+  }
 
-hit(){
- this.energy -= 10 ;
- if(this.energy < 0){
-  this.energy = 0;
- }
- else{
-  this.lastHit = new Date().getTime();
- }
-}
-
-isHurt(){
-let timepassed = new Date().getTime() - this.lastHit;
-timepassed = timepassed /1000;
-return timepassed < 1;
-}
-
-isDead(){
-  return this.energy == 0
-}
-/*
- * @param {Array} arr - ['img/image1.png', 'img/image2.png' ...]
- */
-loadImages(arr) {
-  arr.forEach((path) => {
-    let img = new Image();
-    img.src = path;
-    this.imageCache[path] = img;
-  });
-}
-
-
-      moveLeft(){
-        this.x -= this.speed;
-       
+  drawFrame(ctx) {
+    if (this instanceof Character || this instanceof Chicken || this instanceof MiniChicken) { // ✅ geändert: MiniChicken dazu
+      ctx.beginPath();
+      ctx.lineWidth = "5";
+      ctx.strokeStyle = "red";
+      ctx.rect(this.x, this.y, this.width, this.height);
+      ctx.stroke();
     }
+  }
 
-        moveRight(){
-        this.x += this.speed;
-       
-    }
+  isColliding(mo) {
+    return this.x + this.width > mo.x &&
+      this.y + this.height > mo.y &&
+      this.x < mo.x + mo.width &&
+      this.y < mo.y + mo.height;
+  }
 
-playAnimation(images) {
-  let i = this.currentImage % images.length;   
-  let path = images[i];                         
-  this.img = this.imageCache[path];
-  this.currentImage++;
-}
-jump(){
-  this.speedY = 30;
-  this.isJumping = true;
-  this.jumpFrame = 0;
-}
+  hit() {
+    this.energy -= 10;
+    if (this.energy < 0) this.energy = 0;
+    else this.lastHit = new Date().getTime();
+  }
+
+  isHurt() {
+    let timepassed = new Date().getTime() - this.lastHit;
+    return (timepassed / 1000) < 1;
+  }
+
+  isDead() {
+    return this.energy == 0;
+  }
+
+  moveLeft() { this.x -= this.speed; }
+  moveRight() { this.x += this.speed; }
+
+  playAnimation(images) {
+    let i = this.currentImage % images.length;
+    let path = images[i];
+    this.img = this.imageCache[path];
+    this.currentImage++;
+  }
+
+  jump() {
+    this.speedY = this.jumpPower;
+    this.isJumping = true;
+    this.jumpFrame = 0;
+  }
 }

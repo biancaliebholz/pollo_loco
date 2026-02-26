@@ -15,11 +15,11 @@ class World {
     this.checkCollision();
   }
 
-  setWorld() {
-    this.character.world = this;
-  }
-
-checkCollision() { // ✅ geändert: kein Semikolon nötig, Name passt zum constructor
+ setWorld() {
+  this.character.world = this;
+  this.level.enemies.forEach(e => e.world = this);
+}
+checkCollision() { 
     setInterval(() => {
       this.level.enemies.forEach((enemy) => {
         if (this.character.isColliding(enemy)) {
@@ -32,22 +32,14 @@ checkCollision() { // ✅ geändert: kein Semikolon nötig, Name passt zum const
 
 
   draw() {
-    // ✅ FIX: Transform jedes Frame zurücksetzen, damit translate/scale nicht akkumuliert
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-    // ✅ FIX: clearRect korrekt
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // (Optional später) Kamera dem Character folgen lassen – wenn du willst:
-    // this.camera_x = -this.character.x + 100;
-
-    // Kamera anwenden
     this.ctx.translate(this.camera_x, 0);
 
-    // ✅ NEU: Background-Looping updaten (bevor gezeichnet wird)
     this.loopBackground();
 
-    // Zeichnen in deiner Reihenfolge
     this.addObjectsToMap(this.level.BackgroundLayer);
     this.addToMap(this.character);
     this.addObjectsToMap(this.level.clouds);
@@ -56,8 +48,8 @@ checkCollision() { // ✅ geändert: kein Semikolon nötig, Name passt zum const
     requestAnimationFrame(() => this.draw());
   }
 loopBackground() {
-  const viewLeft = -this.camera_x;                 // linke Sichtkante in Welt-Koordinaten
-  const viewRight = viewLeft + this.canvas.width;  // rechte Sichtkante
+  const viewLeft = -this.camera_x;                 
+  const viewRight = viewLeft + this.canvas.width;  
 
   this.level.BackgroundLayer.forEach(layer => {
     if (layer.x + layer.width < viewLeft) {
