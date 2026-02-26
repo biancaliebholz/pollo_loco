@@ -6,7 +6,7 @@ class Endboss extends MovableObject {
   state = 'wait';         
   hasSeen = false;         
   alertUntil = 0;          
-
+energy = 100;
   seeRange = 550;         
   attackRange = 140;     
 

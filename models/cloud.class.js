@@ -6,8 +6,7 @@ class Cloud extends MovableObject {
   constructor(imagePath, x) {
     super().loadImage(imagePath);
     this.x = x;
-
-    this.speed = 0.08 + Math.random() * 0.12; // ✅ Wolken langsamer
+    this.speed = 0.08 + Math.random() * 0.12;
     this.animate();
   }
 
@@ -18,4 +17,9 @@ class Cloud extends MovableObject {
     }, 1000 / 60);
   }
 
+  wrap() {                 // ✅ FEHLTE
+    if (this.x + this.width < 0) {
+      this.x = 3000;
+    }
+  }
 }

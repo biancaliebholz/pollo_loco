@@ -15,8 +15,11 @@ class MovableObject {
   energy = 100;
   lastHit = 0;
 
-  groundY = 160;      
-  jumpPower = 30;       
+  groundY = 160;
+  jumpPower = 30;
+
+  opacity = 1;              // ✅ NEU: fürs Verblassen
+  once = {};                // ✅ NEU: Animation-Once-Tracker
 
   applyGravity() {
     setInterval(() => {
@@ -24,7 +27,6 @@ class MovableObject {
         this.y -= this.speedY;
         this.speedY -= this.acceleration;
 
-    
         if (this.y > this.groundY) {
           this.y = this.groundY;
           this.speedY = 0;
@@ -51,11 +53,14 @@ class MovableObject {
   }
 
   draw(ctx) {
+    ctx.save();                           // ✅ NEU
+    ctx.globalAlpha = this.opacity;       // ✅ NEU
     ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    ctx.restore();                        // ✅ NEU
   }
 
   drawFrame(ctx) {
-    if (this instanceof Character || this instanceof Chicken || this instanceof MiniChicken) { // ✅ geändert: MiniChicken dazu
+    if (this instanceof Character || this instanceof Chicken || this instanceof MiniChicken) {
       ctx.beginPath();
       ctx.lineWidth = "5";
       ctx.strokeStyle = "red";
@@ -71,11 +76,16 @@ class MovableObject {
       this.y < mo.y + mo.height;
   }
 
-  hit() {
-    this.energy -= 10;
-    if (this.energy < 0) this.energy = 0;
-    else this.lastHit = new Date().getTime();
+hit(){
+  if(this.isDead()) return;   
+  this.energy -= 10;
+
+  if(this.energy < 0){
+    this.energy = 0;
   }
+
+  this.lastHit = new Date().getTime();
+}
 
   isHurt() {
     let timepassed = new Date().getTime() - this.lastHit;
@@ -94,6 +104,27 @@ class MovableObject {
     let path = images[i];
     this.img = this.imageCache[path];
     this.currentImage++;
+  }
+
+  playAnimationOnce(images, key) {            // ✅ NEU: einmal abspielen
+    if (!this.once[key]) this.once[key] = 0;
+    let i = Math.min(this.once[key], images.length - 1);
+    let path = images[i];
+    let img = this.imageCache[path];
+    if (img) this.img = img;
+    if (this.once[key] < images.length - 1) this.once[key]++;
+    return this.once[key] >= images.length - 1; // true = fertig
+  }
+
+  fadeOut() {                                 // ✅ NEU: sauber verblassen
+    let t = setInterval(() => {
+      this.opacity -= 0.03;
+      if (this.opacity <= 0) {
+        this.opacity = 0;
+        clearInterval(t);
+        this.removed = true;                  // ✅ NEU: World kann es aus Array filtern
+      }
+    }, 50);
   }
 
   jump() {

@@ -1,9 +1,13 @@
-// MiniChicken.js
 class MiniChicken extends MovableObject {
-  height = 40;
-  width = 40;
-  y = 380;
-  groundY = 380; // ✅ damit Gravity/Jumps korrekt landen
+  height = 45;
+  width = 45;
+  y = 373;
+  groundY = 373;
+
+  energy = 10;
+
+  opacity = 1;
+  removed = false;
 
   IMAGES_WALKING = [
     'assets/img_pollo_locco/img/3_enemies_chicken/chicken_small/1_walk/1_w.png',
@@ -15,29 +19,47 @@ class MiniChicken extends MovableObject {
     'assets/img_pollo_locco/img/3_enemies_chicken/chicken_small/2_dead/dead.png'
   ];
 
-  constructor(x) { // ✅ x optional
-    super().loadImage(this.IMAGES_WALKING[0]);
+  constructor(x) {
+    super();
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_DEAD);
+    this.img = this.imageCache[this.IMAGES_WALKING[0]];
 
-    // ✅ falls du später zurück willst: Original war 200 + Math.random()*500
     this.x = (x !== undefined) ? x : (200 + Math.random() * 500);
+    this.speed = 0.20 + Math.random() * 0.30;
 
-    this.speed = 0.25 + Math.random() * 0.25;
-    this.jumpPower = 18; // ✅ kleiner Hop als Character
-    this.acceleration = 2.8; // ✅ etwas softer
-
-    this.applyGravity(); // ✅ damit jump() wirkt
     this.animate();
   }
 
   animate() {
-    setInterval(() => { this.moveLeft(); }, 1000 / 60);
-    setInterval(() => { this.playAnimation(this.IMAGES_WALKING); }, 130);
-
-    // ✅ kleiner Hop: randomisiert, damit nicht alle gleichzeitig springen
     setInterval(() => {
-      if (!this.isAboveGround() && Math.random() < 0.35) this.jump();
-    }, 900);
+      if (this.removed) return;
+      if (this.isDead()) return;
+      this.moveLeft();
+    }, 1000 / 60);
+
+    setInterval(() => {
+      if (this.removed) return;
+
+      if (this.isDead()) {
+        if (this.opacity === 1) {
+          this.img = this.imageCache[this.IMAGES_DEAD[0]];
+        }
+
+        this.opacity -= 0.03;
+        if (this.opacity <= 0) this.removed = true;
+        return;
+      }
+
+      this.playAnimation(this.IMAGES_WALKING);
+    }, 130);
+  }
+
+  draw(ctx) {
+    if (this.removed) return;
+    ctx.save();
+    ctx.globalAlpha = this.opacity;
+    super.draw(ctx);
+    ctx.restore();
   }
 }
