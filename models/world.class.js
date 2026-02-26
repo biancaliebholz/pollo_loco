@@ -10,14 +10,26 @@ class World {
     this.ctx = canvas.getContext('2d');
     this.canvas = canvas;
     this.keyboard = keyboard;
-
     this.setWorld();
     this.draw();
+    this.checkCollision();
   }
 
   setWorld() {
     this.character.world = this;
   }
+
+checkCollision() { // ✅ geändert: kein Semikolon nötig, Name passt zum constructor
+    setInterval(() => {
+      this.level.enemies.forEach((enemy) => {
+        if (this.character.isColliding(enemy)) {
+          this.character.hit();
+        }
+      });
+    }, 200);
+  }
+
+
 
   draw() {
     // ✅ FIX: Transform jedes Frame zurücksetzen, damit translate/scale nicht akkumuliert
