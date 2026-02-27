@@ -94,12 +94,15 @@ class Bottle extends MovableObject {
   }
 
   splash() {
-    if (this.state === 'SPLASH') return;
-    this.state = 'SPLASH';
-    this.vx = 0;
-    this.splashFrame = 0;  // ✅ NEU
-    this.opacity = 1;      // ✅ NEU
-  }
+  if (this.state === 'SPLASH') return;
+
+  this.state = 'SPLASH';
+  this.vx = 0;
+  this.splashFrame = 0;
+  this.opacity = 1;
+
+  this.hasHit = true;   // ✅ GANZ WICHTIG!
+}
 
   playSplashAndFade() {
     // ✅ Splash 1x durch

@@ -3,12 +3,15 @@ class Endboss extends MovableObject {
   width = 300;
   y = 10;
 
-  state = 'wait';         
-  hasSeen = false;         
-  alertUntil = 0;          
-energy = 100;
-  seeRange = 550;         
-  attackRange = 140;     
+  state = 'wait';
+  hasSeen = false;
+  alertUntil = 0;
+
+  energy = 100;
+  maxEnergy = 100;      // ✅ NEU: wichtig für Statusbar-Rechnung
+
+  seeRange = 550;
+  attackRange = 140;
 
   IMAGES_WALKING = [
     'assets/img_pollo_locco/img/4_enemie_boss_chicken/1_walk/G1.png',
@@ -18,26 +21,25 @@ energy = 100;
   ];
 
   IMAGES_ALERT = [
-    'assets/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G5.png', 
-    'assets/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G6.png', 
-    'assets/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G7.png', 
-    'assets/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G8.png', 
-    'assets/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G9.png', 
-    'assets/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G10.png', 
-    'assets/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G11.png', 
-    'assets/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G12.png', 
+    'assets/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G5.png',
+    'assets/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G6.png',
+    'assets/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G7.png',
+    'assets/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G8.png',
+    'assets/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G9.png',
+    'assets/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G10.png',
+    'assets/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G11.png',
+    'assets/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G12.png',
   ];
 
   IMAGES_ATTACK = [
-    'assets/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G13.png', 
-     'assets/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G14.png', 
-      'assets/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G15.png', 
-       'assets/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G16.png', 
-        'assets/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G17.png', 
-         'assets/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G18.png', 
-          'assets/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G19.png', 
-           'assets/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G20.png', 
-    
+    'assets/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G13.png',
+    'assets/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G14.png',
+    'assets/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G15.png',
+    'assets/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G16.png',
+    'assets/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G17.png',
+    'assets/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G18.png',
+    'assets/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G19.png',
+    'assets/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G20.png',
   ];
 
   IMAGES_HURT = [
@@ -47,22 +49,28 @@ energy = 100;
   ];
 
   IMAGES_DEAD = [
-    'assets/img_pollo_locco/img/4_enemie_boss_chicken/5_dead/G24.png', 
+    'assets/img_pollo_locco/img/4_enemie_boss_chicken/5_dead/G24.png',
     'assets/img_pollo_locco/img/4_enemie_boss_chicken/5_dead/G25.png',
     'assets/img_pollo_locco/img/4_enemie_boss_chicken/5_dead/G26.png',
-    
   ];
 
   constructor() {
     super().loadImage(this.IMAGES_WALKING[0]);
+
     this.loadImages(this.IMAGES_WALKING);
-    this.loadImages(this.IMAGES_ALERT); 
-    this.loadImages(this.IMAGES_ATTACK); 
-    this.loadImages(this.IMAGES_HURT);   
-    this.loadImages(this.IMAGES_DEAD);   
+    this.loadImages(this.IMAGES_ALERT);
+    this.loadImages(this.IMAGES_ATTACK);
+    this.loadImages(this.IMAGES_HURT);
+    this.loadImages(this.IMAGES_DEAD);
 
     this.x = 2000;
-    this.speed = 0.9; 
+
+    // ✅ schneller laufen (du wolltest "ein bisschen schneller")
+    this.speed = 1.4; // vorher 0.9 (wenn zu schnell: 1.2 / wenn zu langsam: 1.6)
+
+    // ✅ Safety: falls once mal nicht existiert (sollte es bei dir aber in MovableObject geben)
+    if (!this.once) this.once = {};
+
     this.animate();
   }
 
@@ -75,17 +83,22 @@ energy = 100;
   }
 
   updateState() {
-    if (this.isDead()) return this.state = 'dead';
-    if (this.isHurt()) return this.state = 'hurt';
-    if (!this.canSee()) return this.state = 'wait';
+    if (this.isDead()) return (this.state = 'dead');
+    if (this.isHurt()) return (this.state = 'hurt');
+    if (!this.canSee()) return (this.state = 'wait');
 
     if (!this.hasSeen) {
       this.hasSeen = true;
-      this.alertUntil = new Date().getTime() + 1100; 
-      this.resetOnce('alert'); 
-      return this.state = 'alert';
+      this.alertUntil = new Date().getTime() + 1100;
+
+      // ✅ "Alert" Animation once neu starten
+      this.once['alert'] = 0;
+
+      return (this.state = 'alert');
     }
-    if (new Date().getTime() < this.alertUntil) return this.state = 'alert';
+
+    if (new Date().getTime() < this.alertUntil) return (this.state = 'alert');
+
     this.state = this.inAttackRange() ? 'attack' : 'walk';
   }
 
@@ -109,6 +122,8 @@ energy = 100;
     if (this.state === 'alert') return this.playAnimationOnce(this.IMAGES_ALERT, 'alert');
     if (this.state === 'attack') return this.playAnimation(this.IMAGES_ATTACK);
     if (this.state === 'walk') return this.playAnimation(this.IMAGES_WALKING);
-    this.img = this.imageCache[this.IMAGES_WALKING[0]] || this.img; // wait
+
+    // wait
+    this.img = this.imageCache[this.IMAGES_WALKING[0]] || this.img;
   }
 }
