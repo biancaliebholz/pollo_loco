@@ -50,9 +50,6 @@ class World {
 
   /**
    * Runs multiple setInterval functions to check for various game conditions periodically.
-   *
-   * @param None
-   * @return None
    */
   run() {
     setInterval(() => {
@@ -151,9 +148,6 @@ class World {
 
   /**
    * Checks for coin collisions and collects the coins if a collision is detected.
-   *
-   * @param {type} paramName - description of parameter
-   * @return {type} description of return value
    */
   checkCoinCollisions() {
     this.level.collectableCoins.forEach((coins, index) => {
@@ -167,9 +161,8 @@ class World {
   /**
    * Collects a coin and updates the player's energy and the game state.
    *
-   * @param {Array} coins - The array of coins in the game.
+   * @param {Object} coins - The coin object.
    * @param {number} index - The index of the coin to be collected.
-   * @return {void} This function does not return a value.
    */
   collectCoin(coins, index) {
     this.character.addEnergyCoin();
@@ -211,10 +204,6 @@ class World {
 
   /**
    * Checks if any throwable objects are colliding with the endboss and performs the corresponding actions.
-   *
-   * @param {type} throwableObject - the throwable object to check for collision
-   * @param {type} throwableIndex - the index of the throwable object in the array
-   * @return {type} undefined
    */
  checkEndbossGetHit() {
   this.throwableObjects.forEach((throwableObject, throwableIndex) => {
@@ -379,7 +368,6 @@ class World {
    * Flips the image back and restores the canvas context.
    *
    * @param {Object} mo - The object containing the x coordinate of the image.
-   * @return {undefined} This function does not return a value.
    */
   flipImageBack(mo) {
     mo.x = mo.x * -1;

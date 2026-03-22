@@ -39,10 +39,9 @@ class StatusBar extends DrawableObject {
 
   
   /**
-   * A description of the entire function.
+   * Returns the image index based on the current percentage.
    *
-   * @param {type} paramName - description of parameter
-   * @return {type} description of return value
+   * @return {number} The index of the image.
    */
   resolveImageIndex() {
     if (this.percentage == 100) {
@@ -151,7 +150,7 @@ class StatusBarCoin extends DrawableObject {
   /**
    * Set percentage coin and update related image.
    *
-   * @param {type} percentageCoin - the percentage of the coin
+   * @param {number} percentageCoin - the percentage of the coin
    */
   setPercentageCoin(percentageCoin) {
     this.percentageCoin = percentageCoin;
@@ -161,10 +160,9 @@ class StatusBarCoin extends DrawableObject {
 
 
   /**
-   * A description of the entire function.
+   * Returns the image index based on the coin percentage.
    *
-   * @param {type} paramName - description of parameter
-   * @return {type} description of return value
+   * @return {number} The index of the image.
    */
   resolveImageIndexCoin() {
     if (this.percentageCoin == 100) {
@@ -212,8 +210,7 @@ class StatusBarEndboss extends DrawableObject {
   /**
    * Set the percentage of the end boss.
    *
-   * @param {type} percentageEndboss - the percentage of the end boss
-   * @return {type} undefined
+   * @param {number} percentageEndboss - the percentage of the end boss
    */
   setPercentageEndboss(percentageEndboss) {
     this.percentageEndboss = percentageEndboss;

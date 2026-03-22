@@ -24,9 +24,6 @@ class Smallchicken extends MovableObject {
 
   /**
    * Constructor for initializing the chicken enemy.
-   *
-   * @param {type} paramName - description of parameter
-   * @return {type} description of return value
    */
   constructor() {
     super().loadImage('assets/img_pollo_locco/img/3_enemies_chicken/chicken_small/1_walk/1_w.png');

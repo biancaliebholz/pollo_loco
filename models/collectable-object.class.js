@@ -28,9 +28,6 @@ class CollectableCoin extends MovableObject {
 
   /**
    * A method that continuously plays the animation using a set interval.
-   *
-   * @param {type} paramName - description of parameter
-   * @return {type} description of return value
    */
   animate() {
     setInterval(() => {
@@ -55,7 +52,6 @@ class CollectableBottle extends MovableObject {
 
   IMAGES_BOTTLES = [
     'assets/img_pollo_locco/img/6_salsa_bottle/1_salsa_bottle_on_ground.png',
-    //'assets/img_pollo_locco/img/6_salsa_bottle/2_salsa_bottle_on_ground.png'
   ];
 
  
@@ -77,4 +73,3 @@ class CollectableBottle extends MovableObject {
     }, 300);
   }
 }
-
