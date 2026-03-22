@@ -25,7 +25,8 @@ class ThrowableObject extends MovableObject {
   ];
 
   constructor(x, y, direction) {
-    super().loadImage('assets/img_pollo_locco/img/6_salsa_bottle/1_salsa_bottle_on_ground.png');
+    super();
+    this.loadImage('assets/img_pollo_locco/img/6_salsa_bottle/1_salsa_bottle_on_ground.png');
     this.loadImages(this.IMAGES_ROTATE);
     this.loadImages(this.IMAGES_BOTTLE_SPLASH);
 
@@ -43,15 +44,9 @@ class ThrowableObject extends MovableObject {
     this.speedY = 30;
     this.applyGravity();
 
-    if (this.otherDirection == true) {
-      setInterval(() => {
-        this.x -= 10;
-      }, 25);
-    } else {
-      setInterval(() => {
-        this.x += 10;
-      }, 25);
-    }
+    setInterval(() => {
+      this.x += this.otherDirection ? -10 : 10;
+    }, 25);
   }
 
   breakAndSplash() {

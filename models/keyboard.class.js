@@ -44,56 +44,22 @@ class Keyboard {
   }
 
   bindBtsPressEvents() {
-    const btnLeft = document.getElementById('btnLeft');
-    const btnRight = document.getElementById('btnRight');
-    const btnJump = document.getElementById('btnJump');
-    const btnThrow = document.getElementById('btnThrow');
+    this.bindTouch('btnLeft', 'LEFT');
+    this.bindTouch('btnRight', 'RIGHT');
+    this.bindTouch('btnJump', 'SPACE');
+    this.bindTouch('btnThrow', 'D');
+  }
 
-    if (btnLeft) {
-      btnLeft.addEventListener('touchstart', (e) => {
+  bindTouch(elementId, key) {
+    const btn = document.getElementById(elementId);
+    if (btn) {
+      btn.addEventListener('touchstart', (e) => {
         e.preventDefault();
-        this.LEFT = true;
+        this[key] = true;
       });
-
-      btnLeft.addEventListener('touchend', (e) => {
+      btn.addEventListener('touchend', (e) => {
         e.preventDefault();
-        this.LEFT = false;
-      });
-    }
-
-    if (btnRight) {
-      btnRight.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        this.RIGHT = true;
-      });
-
-      btnRight.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        this.RIGHT = false;
-      });
-    }
-
-    if (btnJump) {
-      btnJump.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        this.SPACE = true;
-      });
-
-      btnJump.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        this.SPACE = false;
-      });
-    }
-
-    if (btnThrow) {
-      btnThrow.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        this.D = true;
-      });
-
-      btnThrow.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        this.D = false;
+        this[key] = false;
       });
     }
   }

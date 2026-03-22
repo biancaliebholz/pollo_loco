@@ -91,49 +91,26 @@ function backToMenu() {
   toggleElement('winGameScreen', true);
   toggleElement('btnMobileWrapper', true);
   toggleElement('pauseBtn', true);
+  toggleElement('canvas', true);
 
-  gameStarted = false;
-  gamePaused = false;
-  updatePauseButtonIcon();
-  hidePauseOverlay();
+  resetGameFlags();
   backgroundMusic.pause();
 }
 
 function gameOver() {
-  toggleElement('gameOverScreen', false);
-  toggleElement('btnMobileWrapper', true);
-  toggleElement('pauseBtn', true);
-
-  gameStarted = false;
-  gamePaused = false;
-  updatePauseButtonIcon();
-  hidePauseOverlay();
-
-  stopGame();
-
-  if (world && world.character) {
-    world.character.walking_sound.pause();
-    world.character.walking_sound.currentTime = 0;
-  }
-
-  backgroundMusic.pause();
-
-  if (!mainSound) {
-    gameOverSound.currentTime = 0;
-    gameOverSound.play().catch(() => {});
-  }
+  finishGame('gameOverScreen', gameOverSound);
 }
 
 function winGame() {
-  toggleElement('winGameScreen', false);
+  finishGame('winGameScreen', winSound);
+}
+
+function finishGame(screenId, soundEffect) {
+  toggleElement(screenId, false);
   toggleElement('btnMobileWrapper', true);
   toggleElement('pauseBtn', true);
 
-  gameStarted = false;
-  gamePaused = false;
-  updatePauseButtonIcon();
-  hidePauseOverlay();
-
+  resetGameFlags();
   stopGame();
 
   if (world && world.character) {
@@ -143,10 +120,17 @@ function winGame() {
 
   backgroundMusic.pause();
 
-  if (!mainSound) {
-    winSound.currentTime = 0;
-    winSound.play().catch(() => {});
+  if (!mainSound && soundEffect) {
+    soundEffect.currentTime = 0;
+    soundEffect.play().catch(() => {});
   }
+}
+
+function resetGameFlags() {
+  gameStarted = false;
+  gamePaused = false;
+  updatePauseButtonIcon();
+  hidePauseOverlay();
 }
 
 function restartGame() {
@@ -154,10 +138,7 @@ function restartGame() {
   toggleElement('winGameScreen', true);
   toggleElement('canvas', false);
   toggleElement('pauseBtn', false);
-  gameStarted = false;
-  gamePaused = false;
-  updatePauseButtonIcon();
-  hidePauseOverlay();
+  resetGameFlags();
   startGame();
 }
 
@@ -270,23 +251,25 @@ function toggleFullscreen() {
 }
 
 function popupToggleFirst() {
-  const popupFirst = document.getElementById('popupIntroTextFirst');
-  const popupContentFirst = document.getElementById('popupContentFirst');
-  if (!popupFirst || !popupContentFirst) return;
-
-  popupFirst.classList.toggle('popupHideWrapperFirst');
-  popupContentFirst.classList.toggle('popupHideInnerContentFirst');
-  changeImage(popupFirst, 'imageChangeFirst', 'book');
+  togglePopup('popupIntroTextFirst', 'popupContentFirst', 'popupHideWrapperFirst', 'popupHideInnerContentFirst', 'imageChangeFirst', 'book');
 }
 
 function popupToggleSecond() {
-  const popupSecond = document.getElementById('popupIntroTextSecond');
-  const popupContentSecond = document.getElementById('popupContentSecond');
-  if (!popupSecond || !popupContentSecond) return;
+  togglePopup('popupIntroTextSecond', 'popupContentSecond', 'popupHideWrapperSecond', 'popupHideInnerContentSecond', 'imageChangeSecond', 'info');
+}
 
-  popupSecond.classList.toggle('popupHideWrapperSecond');
-  popupContentSecond.classList.toggle('popupHideInnerContentSecond');
-  changeImage(popupSecond, 'imageChangeSecond', 'info');
+function togglePopup(popupId, contentId, hideClass, contentClass, imgId, iconType) {
+  const popup = document.getElementById(popupId);
+  const content = document.getElementById(contentId);
+  if (!popup || !content) return;
+
+  popup.classList.toggle(hideClass);
+  content.classList.toggle(contentClass);
+  
+  // changeImage logic needs to know which class to check. 
+  // Since changeImage checks both hardcoded classes, we can reuse it or inline it. 
+  // For minimal changes, we reuse existing changeImage.
+  changeImage(popup, imgId, iconType);
 }
 
 function changeImage(popup, imageId, iconType) {
