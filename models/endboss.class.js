@@ -1,17 +1,26 @@
 class Endboss extends MovableObject {
-  height = 450;
-  width = 300;
-  y = 10;
+  speedAngry = 2;
+  speed = 0.15;
+  isDead = false;
+  inDamage = false;
+  isAlert = false;
+  moveLeftAngry = false;
+  aggressive = false;
+  endbossImmune = false;
+  energyEndboss = 100;
+  otherDirection = false;
+  height = 400;
+  width = 280;
+  y = 60;
+  endbossdead_sound = new Audio('assets/audio/chickenDead2.mp3');
+  alert_sound = new Audio('assets/audio/warning.wav');
 
-  state = 'wait';
-  hasSeen = false;
-  alertUntil = 0;
-
-  energy = 100;
-  maxEnergy = 100;      // ✅ NEU: wichtig für Statusbar-Rechnung
-
-  seeRange = 550;
-  attackRange = 140;
+  offset = {
+    top: 80,
+    bottom: 80,
+    left: 80,
+    right: 80
+  };
 
   IMAGES_WALKING = [
     'assets/img_pollo_locco/img/4_enemie_boss_chicken/1_walk/G1.png',
@@ -56,74 +65,134 @@ class Endboss extends MovableObject {
 
   constructor() {
     super().loadImage(this.IMAGES_WALKING[0]);
-
     this.loadImages(this.IMAGES_WALKING);
-    this.loadImages(this.IMAGES_ALERT);
+    this.loadImages(this.IMAGES_DEAD);
     this.loadImages(this.IMAGES_ATTACK);
     this.loadImages(this.IMAGES_HURT);
-    this.loadImages(this.IMAGES_DEAD);
-
-    this.x = 2000;
-
-    // ✅ schneller laufen (du wolltest "ein bisschen schneller")
-    this.speed = 1.4; // vorher 0.9 (wenn zu schnell: 1.2 / wenn zu langsam: 1.6)
-
-    // ✅ Safety: falls once mal nicht existiert (sollte es bei dir aber in MovableObject geben)
-    if (!this.once) this.once = {};
-
+    this.loadImages(this.IMAGES_ALERT);
+    this.x = 2200;
+    this.moveLeftAngry = false;
     this.animate();
   }
 
-  animate() {
-    setInterval(() => {
-      this.updateState();
-      this.moveByState();
-      this.animateByState();
-    }, 130);
+  hitBottleEndboss() {
+    this.inDamage = true;
+    setTimeout(() => {
+      this.inDamage = false;
+    }, 400);
   }
 
-  updateState() {
-    if (this.isDead()) return (this.state = 'dead');
-    if (this.isHurt()) return (this.state = 'hurt');
-    if (!this.canSee()) return (this.state = 'wait');
+  minusEnergyEndboss() {
+    if (!this.endbossImmune) {
+      this.endbossImmune = true;
+      this.energyEndboss -= 20;
+      this.speed += 0.3;
 
-    if (!this.hasSeen) {
-      this.hasSeen = true;
-      this.alertUntil = new Date().getTime() + 1100;
+      if (this.energyEndboss < 0) {
+        this.energyEndboss = 0;
+        this.isDeadEndboss();
+      } else {
+        this.lastHit = new Date().getTime();
+      }
 
-      // ✅ "Alert" Animation once neu starten
-      this.once['alert'] = 0;
-
-      return (this.state = 'alert');
+      setTimeout(() => {
+        this.endbossImmune = false;
+      }, 200);
     }
 
-    if (new Date().getTime() < this.alertUntil) return (this.state = 'alert');
-
-    this.state = this.inAttackRange() ? 'attack' : 'walk';
+    this.checkAngryEndboss();
   }
 
-  canSee() {
-    return this.world && Math.abs(this.x - this.world.character.x) < this.seeRange;
+  checkAngryEndboss() {
+    if (this.energyEndboss <= 20) {
+      this.isAlert = true;
+      this.moveLeftAngry = false;
+
+      setTimeout(() => {
+        if (!mainSound) {
+          this.alert_sound.cloneNode(true).play();
+        }
+      }, 10);
+
+      setTimeout(() => {
+        this.isAlert = false;
+        this.moveLeftAngry = true;
+      }, 1500);
+    }
   }
 
-  inAttackRange() {
-    return this.world && Math.abs(this.x - this.world.character.x) < this.attackRange;
+  moveLeftEndbossAngry() {
+    this.x -= this.speedAngry;
   }
 
-  moveByState() {
-    if (this.state !== 'walk') return;
-    if (this.x > this.world.character.x) this.moveLeft();
-    else this.moveRight();
+  moveRightEndbossAngry() {
+    this.x += this.speedAngry;
   }
 
-  animateByState() {
-    if (this.state === 'dead') return this.playAnimationOnce(this.IMAGES_DEAD, 'dead');
-    if (this.state === 'hurt') return this.playAnimationOnce(this.IMAGES_HURT, 'hurt');
-    if (this.state === 'alert') return this.playAnimationOnce(this.IMAGES_ALERT, 'alert');
-    if (this.state === 'attack') return this.playAnimation(this.IMAGES_ATTACK);
-    if (this.state === 'walk') return this.playAnimation(this.IMAGES_WALKING);
+  isDeadEndboss() {
+    if (this.energyEndboss <= 0) {
+      this.isDead = true;
+    }
+  }
 
-    // wait
-    this.img = this.imageCache[this.IMAGES_WALKING[0]] || this.img;
+  animate() {
+    this.setupMovementInterval();
+    this.setupStateInterval();
+  }
+
+  setupMovementInterval() {
+    setInterval(() => {
+      if (gamePaused) return;
+
+      if (this.isAlert) {
+        this.speed = 0;
+        return;
+      }
+
+      if (this.moveLeftAngry) {
+        if (this.otherDirection) {
+          this.moveRightEndbossAngry();
+        } else {
+          this.moveLeftEndbossAngry();
+        }
+      } else {
+        if (this.otherDirection) {
+          this.moveRight();
+        } else {
+          this.moveLeft();
+        }
+      }
+    }, 1000 / 60);
+  }
+
+  setupStateInterval() {
+    setInterval(() => {
+      if (gamePaused) return;
+      this.updateCharacterState();
+    }, 9000 / 60);
+  }
+
+  updateCharacterState() {
+    if (this.isDead) {
+      this.handleCharacterDead();
+    } else if (this.aggressive) {
+      this.playAnimation(this.IMAGES_ATTACK);
+    } else if (this.isAlert) {
+      this.playAnimation(this.IMAGES_ALERT);
+    } else if (this.inDamage) {
+      this.playAnimation(this.IMAGES_HURT);
+    } else {
+      this.playAnimation(this.IMAGES_WALKING);
+    }
+  }
+
+  handleCharacterDead() {
+    this.playAnimation(this.IMAGES_DEAD);
+    if (!mainSound) {
+      this.endbossdead_sound.cloneNode(true).play();
+    }
+    setTimeout(() => {
+      winGame();
+    }, 700);
   }
 }
