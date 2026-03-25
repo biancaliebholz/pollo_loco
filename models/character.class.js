@@ -93,6 +93,7 @@ class Character extends MovableObject {
   animate() {
     setInterval(() => {
       if (gamePaused) return;
+      if (!this.world || !this.world.keyboard) return;
       this.handleMovement();
       this.handleActions();
       this.updateCamera();
@@ -100,27 +101,27 @@ class Character extends MovableObject {
 
     setInterval(() => {
       if (gamePaused) return;
+      if (!this.world || !this.world.keyboard) return;
       this.updateCharacterState();
     }, 100);
   }
 
   handleMovement() {
-    this.walking_sound.pause();
-
     if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
       this.moveRight();
       this.otherDirection = false;
-      if (!mainSound) {
-        this.walking_sound.play();
-      }
-    }
-
-    if (this.world.keyboard.LEFT && this.x > 0) {
+    } else if (this.world.keyboard.LEFT && this.x > 0) {
       this.moveLeft();
       this.otherDirection = true;
-      if (!mainSound) {
-        this.walking_sound.play();
+    }
+
+    // Audio Logik: Nur abspielen, wenn wir uns bewegen und Sound an ist
+    if ((this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) || (this.world.keyboard.LEFT && this.x > 0)) {
+      if (!mainSound && this.walking_sound.paused) {
+        this.walking_sound.play().catch(() => {});
       }
+    } else {
+      this.walking_sound.pause();
     }
   }
 

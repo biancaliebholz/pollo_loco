@@ -23,10 +23,9 @@ function initGameUi() {
 }
 
 function setupMuteToggle(toggle) {
-  toggle.checked = false;
-  backgroundMusic.muted = false;
-  backgroundSound = true;
-  mainSound = false;
+  const isMuted = localStorage.getItem('isMuted') === 'true';
+  toggle.checked = isMuted;
+  toggleMute(isMuted);
   toggle.addEventListener('change', () => {
     toggleMute(toggle.checked);
     toggle.blur();
@@ -43,15 +42,47 @@ function preventBrowserKeys(e) {
 }
 
 async function startGame() {
+  console.log('startGame clicked');
   blurActiveElement();
+  showLoadingScreen();
+  
+  // 1. Assets laden (Preload Phase)
+  DrawableObject.assetsToLoad = [];
+
+  const audioToPreload = [
+    'assets/audio/game.mp3',
+    'assets/audio/characterRun.mp3',
+    'assets/audio/collectSound.wav',
+    'assets/audio/bottleCollectSound.wav',
+    'assets/audio/characterJump.wav',
+    'assets/audio/bottleBreak.mp3'
+  ];
+  audioToPreload.forEach(addAudioToLoad);
+
+  initLevel();
+  // Dummy-Instanzen erzeugen, um Caching für Character/UI zu triggern
+  new Character();
+  new StatusBar();
+  new StatusBarBottle();
+  new StatusBarCoin();
+  new StatusBarEndboss();
+  new ThrowableObject();
+  
+  // 2. Warten bis alles da ist
+  await Promise.all(DrawableObject.assetsToLoad);
+  stopGame(); // Stoppt die Intervalle der Dummy-Objekte
+
+  // 3. Spiel wirklich starten
   resetGameState();
   startScreenClose();
-  showLoadingScreen();
-  initLevel();
+  document.getElementById('loadingScreen').classList.add('hide');
+  
+  initLevel(); // Level sauber neu initialisieren
 
   canvas = document.getElementById('canvas');
   playBackgroundMusic();
   world = new World(canvas, keyboard);
+  console.log('startGame finished');
 }
 
 function blurActiveElement() {
@@ -73,7 +104,6 @@ async function showLoadingScreen() {
   if (!el) return;
 
   el.classList.remove('hide');
-  setTimeout(() => el.classList.add('hide'), 800);
 }
 
 function startScreenClose() {
@@ -120,10 +150,7 @@ function finishGame(screenId, soundEffect) {
 
   backgroundMusic.pause();
 
-  if (!mainSound && soundEffect) {
-    soundEffect.currentTime = 0;
-    soundEffect.play().catch(() => {});
-  }
+  playAudio(soundEffect);
 }
 
 function resetGameFlags() {
@@ -169,7 +196,32 @@ function playBackgroundMusic() {
   backgroundMusic.pause();
 }
 
+/**
+ * Zentrale Audio-Funktion
+ * Spielt Sound ab, wenn nicht gemuted. Klont Audio für Überlappungen (SFX).
+ */
+function playAudio(audio) {
+  if (audio && !mainSound) {
+    audio.cloneNode(true).play().catch(() => {});
+  }
+}
+
+/**
+ * Fügt Audio-Dateien zur Preload-Queue hinzu.
+ * Wartet auf 'canplaythrough', damit Sounds sofort verfügbar sind.
+ */
+function addAudioToLoad(path) {
+  const audio = new Audio(path);
+  audio.preload = 'auto';
+  const promise = new Promise((resolve) => {
+    audio.oncanplaythrough = resolve;
+    audio.onerror = resolve;
+  });
+  DrawableObject.assetsToLoad.push(promise);
+}
+
 function toggleMute(isMuted) {
+  localStorage.setItem('isMuted', isMuted);
   mainSound = isMuted;
   backgroundSound = !isMuted;
   backgroundMusic.muted = isMuted;

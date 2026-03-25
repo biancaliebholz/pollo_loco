@@ -6,6 +6,7 @@ class DrawableObject {
   y = 280;
   height = 150;
   width = 100;
+  static assetsToLoad = [];
 
   /**
    * Loads an image from the given path.
@@ -20,6 +21,7 @@ class DrawableObject {
 
     this.img = new Image();
     this.img.src = path;
+    this.pushAssetToLoad(this.img);
   }
 
   /**
@@ -80,6 +82,15 @@ class DrawableObject {
       let img = new Image();
       img.src = path;
       this.imageCache[path] = img;
+      this.pushAssetToLoad(img);
     });
+  }
+
+  pushAssetToLoad(img) {
+    const promise = new Promise((resolve) => {
+      img.onload = resolve;
+      img.onerror = resolve; // Auch bei Fehler weitermachen
+    });
+    DrawableObject.assetsToLoad.push(promise);
   }
 }

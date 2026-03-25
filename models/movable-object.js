@@ -51,9 +51,7 @@ class MovableObject extends DrawableObject {
   hit() {
     if (!this.immune) {
       this.immune = true;
-      if (!mainSound) {
-        this.hurt_sound.play();
-      }
+      playAudio(this.hurt_sound);
       this.energy -= 20;
       if (this.energy < 0) {
         this.energy = 0;
@@ -113,9 +111,7 @@ class MovableObject extends DrawableObject {
   }
 
   jump() {
-    if (!mainSound) {
-      this.jump_sound.cloneNode(true).play();
-    }
+    playAudio(this.jump_sound);
     this.speedY = 30;
     if (this.y <= 150) {
       this.y = 150;

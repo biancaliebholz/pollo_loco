@@ -123,7 +123,7 @@ class World {
     const enemyIndex = this.level.enemies.indexOf(enemy);
     if (enemyIndex !== -1 && !enemy.isDead) {
       this.character.immune = true;
-      this.playSound(this.dead_sound);
+      playAudio(this.dead_sound);
       setTimeout(() => {
         this.level.enemies.splice(enemyIndex, 1);
         this.character.immune = false;
@@ -167,7 +167,7 @@ class World {
   collectCoin(coins, index) {
     this.character.addEnergyCoin();
     this.addedCoins.push({ coin: coins, index: index });
-    this.playSound(this.collectcoin_sound);
+    playAudio(this.collectcoin_sound);
     this.level.collectableCoins.splice(index, 1);
     this.statusBarCoin.setPercentageCoin(this.character.energyCoin);
   }
@@ -196,7 +196,7 @@ class World {
   collectBottle(bottle, index) {
     this.character.addEnergyBottle();
     this.addedBottles.push({ bottle: bottle, index: index });
-    this.playSound(this.collectbottle_sound);
+    playAudio(this.collectbottle_sound);
     this.level.collectableBottles.splice(index, 1);
     this.statusBarBottle.setPercentageBottle(this.character.energyBottle);
   }
@@ -274,7 +274,7 @@ class World {
           if (!enemy.isDead) {
             enemy.isDead = true;
             setTimeout(() => {
-              this.playSound(this.dead_sound);
+              playAudio(this.dead_sound);
               this.level.enemies.splice(this.level.enemies.indexOf(enemy), 1);
             }, 300);
           }
@@ -391,14 +391,4 @@ checkCharacterPositionEndboss() {
     }
   }
 }
-
-  /**
-   * Helper to play sound if not muted
-   */
-  playSound(audio) {
-    if (!mainSound && audio) {
-      audio.cloneNode(true).play();
-    }
-  }
-  
 }

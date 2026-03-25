@@ -109,9 +109,7 @@ class Endboss extends MovableObject {
       this.moveLeftAngry = false;
 
       setTimeout(() => {
-        if (!mainSound) {
-          this.alert_sound.cloneNode(true).play();
-        }
+        playAudio(this.alert_sound);
       }, 10);
 
       setTimeout(() => {
@@ -188,9 +186,7 @@ class Endboss extends MovableObject {
 
   handleCharacterDead() {
     this.playAnimation(this.IMAGES_DEAD);
-    if (!mainSound) {
-      this.endbossdead_sound.cloneNode(true).play();
-    }
+    playAudio(this.endbossdead_sound);
     setTimeout(() => {
       winGame();
     }, 700);
