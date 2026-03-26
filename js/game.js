@@ -20,6 +20,8 @@ function initGameUi() {
   const toggle = document.getElementById('muteToggle');
   if (toggle) setupMuteToggle(toggle);
   updatePauseButtonIcon();
+  const btnStart = document.getElementById('btnStart');
+  if (btnStart) btnStart.disabled = false;
 }
 
 function setupMuteToggle(toggle) {
@@ -42,7 +44,8 @@ function preventBrowserKeys(e) {
 }
 
 async function startGame() {
-  console.log('startGame clicked');
+  if (isLoading) return;
+  isLoading = true;
   blurActiveElement();
   showLoadingScreen();
   
@@ -55,7 +58,9 @@ async function startGame() {
     'assets/audio/collectSound.wav',
     'assets/audio/bottleCollectSound.wav',
     'assets/audio/characterJump.wav',
-    'assets/audio/bottleBreak.mp3'
+    'assets/audio/bottleBreak.mp3',
+    'assets/audio/losing.mp3',
+    'assets/audio/won.mp3'
   ];
   audioToPreload.forEach(addAudioToLoad);
 
@@ -82,7 +87,7 @@ async function startGame() {
   canvas = document.getElementById('canvas');
   playBackgroundMusic();
   world = new World(canvas, keyboard);
-  console.log('startGame finished');
+  isLoading = false;
 }
 
 function blurActiveElement() {

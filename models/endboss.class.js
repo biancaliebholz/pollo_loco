@@ -88,7 +88,7 @@ class Endboss extends MovableObject {
       this.energyEndboss -= 20;
       this.speed += 0.3;
 
-      if (this.energyEndboss < 0) {
+      if (this.energyEndboss <= 0) {
         this.energyEndboss = 0;
         this.isDeadEndboss();
       } else {

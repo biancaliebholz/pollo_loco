@@ -289,34 +289,32 @@ class World {
   /**
    * Function to draw the game elements on the canvas.
    */
-  draw() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+draw() {
+  this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    this.ctx.translate(this.camera_x, 0);
-    this.addObjectsToMap(this.level.backgroundObjects);
+  this.ctx.translate(this.camera_x, 0);
+  this.addObjectsToMap(this.level.backgroundObjects);
 
-    this.ctx.translate(-this.camera_x, 0);
-    this.addToMap(this.statusBar);
-    this.addToMap(this.statusBarEndboss);
-    this.addToMap(this.statusBarBottle);
-    this.addToMap(this.statusBarCoin);
-    this.ctx.translate(this.camera_x, 0);
+  this.addToMap(this.character);
+  this.addObjectsToMap(this.level.clouds);
+  this.addObjectsToMap(this.level.enemies);
+  this.addObjectsToMap(this.level.endboss);
+  this.addObjectsToMap(this.throwableObjects);
+  this.addObjectsToMap(this.collectableCoins);
+  this.addObjectsToMap(this.collectableBottles);
 
-    this.addToMap(this.character);
-    this.addObjectsToMap(this.level.clouds);
-    this.addObjectsToMap(this.level.enemies);
-    this.addObjectsToMap(this.level.endboss);
-    this.addObjectsToMap(this.throwableObjects);
-    this.addObjectsToMap(this.collectableCoins);
-    this.addObjectsToMap(this.collectableBottles);
+  this.ctx.translate(-this.camera_x, 0);
 
-    this.ctx.translate(-this.camera_x, 0);
+  this.addToMap(this.statusBar);
+  this.addToMap(this.statusBarEndboss);
+  this.addToMap(this.statusBarBottle);
+  this.addToMap(this.statusBarCoin);
 
-    let self = this;
-    requestAnimationFrame(function () {
-      self.draw();
-    });
-  }
+  let self = this;
+  requestAnimationFrame(function () {
+    self.draw();
+  });
+}
 
 
   /**

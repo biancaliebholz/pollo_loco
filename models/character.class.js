@@ -1,6 +1,6 @@
 class Character extends MovableObject {
   height = 280;
-  y = 80;
+  y = 50;
   speed = 10;
   timePassed = 0;
   dead_sound = new Audio('assets/audio/characterDead.wav');
