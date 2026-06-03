@@ -1,3 +1,6 @@
+/**
+ * Represents a collectable coin that animates and spawns at a random position.
+ */
 class CollectableCoin extends MovableObject {
   height = 150;
   width = 150;
@@ -13,6 +16,9 @@ class CollectableCoin extends MovableObject {
     bottom: 60,
   };
 
+  /**
+   * Loads images, starts the animation, and randomizes the coin's position.
+   */
     constructor() {
     super().loadImage(this.IMAGES_COINS[0]);
     this.loadImages(this.IMAGES_COINS);
@@ -20,6 +26,9 @@ class CollectableCoin extends MovableObject {
     this.randomizePosition();
   }
 
+  /**
+   * Sets a random horizontal and vertical position within the level.
+   */
   randomizePosition() {
     this.x = 500 + Math.random() * 1500;
     this.y = 125 + Math.random() * 200;
@@ -37,6 +46,9 @@ class CollectableCoin extends MovableObject {
 }
 
 
+/**
+ * Represents a collectable salsa bottle lying on the ground.
+ */
 class CollectableBottle extends MovableObject {
   height = 100;
   width = 100;
@@ -54,7 +66,9 @@ class CollectableBottle extends MovableObject {
     'assets/img_pollo_locco/img/6_salsa_bottle/1_salsa_bottle_on_ground.png',
   ];
 
- 
+  /**
+   * Loads images, starts the animation, and randomizes the bottle's position.
+   */
   constructor() {
     super().loadImage(this.IMAGES_BOTTLES[0]);
     this.loadImages(this.IMAGES_BOTTLES);
@@ -63,10 +77,16 @@ class CollectableBottle extends MovableObject {
   }
 
 
+  /**
+   * Sets a random horizontal position within the level.
+   */
   randomizePosition() {
     this.x = 200 + Math.random() * 1500;
   }
 
+  /**
+   * Continuously cycles through the bottle images.
+   */
   animate() {
     setInterval(() => {
       this.playAnimation(this.IMAGES_BOTTLES);

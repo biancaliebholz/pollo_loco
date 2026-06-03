@@ -1,8 +1,14 @@
+/**
+ * Represents the player character Pepe, controlled via keyboard input.
+ * Extends MovableObject with walking, jumping, idle, and hurt animations.
+ */
 class Character extends MovableObject {
   height = 280;
   y = 50;
   speed = 10;
+  /** @type {number} */
   timePassed = 0;
+  /** @type {HTMLAudioElement} */
   dead_sound = new Audio('assets/audio/characterDead.wav');
 
   offset = {
@@ -12,6 +18,7 @@ class Character extends MovableObject {
     bottom: 10,
   };
 
+  /** @type {string[]} */
   IMAGES_WALKING = [
     'assets/img_pollo_locco/img/2_character_pepe/2_walk/W-21.png',
     'assets/img_pollo_locco/img/2_character_pepe/2_walk/W-22.png',
@@ -21,6 +28,7 @@ class Character extends MovableObject {
     'assets/img_pollo_locco/img/2_character_pepe/2_walk/W-26.png',
   ];
 
+  /** @type {string[]} */
   IMAGES_JUMPING = [
     'assets/img_pollo_locco/img/2_character_pepe/3_jump/J-31.png',
     'assets/img_pollo_locco/img/2_character_pepe/3_jump/J-32.png',
@@ -33,6 +41,7 @@ class Character extends MovableObject {
     'assets/img_pollo_locco/img/2_character_pepe/3_jump/J-39.png',
   ];
 
+  /** @type {string[]} */
   IMAGES_DEAD = [
     'assets/img_pollo_locco/img/2_character_pepe/5_dead/D-51.png',
     'assets/img_pollo_locco/img/2_character_pepe/5_dead/D-52.png',
@@ -43,6 +52,7 @@ class Character extends MovableObject {
     'assets/img_pollo_locco/img/2_character_pepe/5_dead/D-57.png',
   ];
 
+  /** @type {string[]} */
   IMAGES_IDLE = [
     'assets/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-1.png',
     'assets/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-2.png',
@@ -56,6 +66,7 @@ class Character extends MovableObject {
     'assets/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-10.png',
   ];
 
+  /** @type {string[]} */
   IMAGES_LONG_IDLE = [
     'assets/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-11.png',
     'assets/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-12.png',
@@ -69,15 +80,21 @@ class Character extends MovableObject {
     'assets/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-20.png',
   ];
 
+  /** @type {string[]} */
   IMAGES_HURT = [
     'assets/img_pollo_locco/img/2_character_pepe/4_hurt/H-41.png',
     'assets/img_pollo_locco/img/2_character_pepe/4_hurt/H-42.png',
     'assets/img_pollo_locco/img/2_character_pepe/4_hurt/H-43.png',
   ];
 
+  /** @type {World} */
   world;
+  /** @type {HTMLAudioElement} */
   walking_sound = new Audio("assets/audio/characterRun.mp3");
 
+  /**
+   * Loads all animation image sets, applies gravity, and starts the animation loops.
+   */
   constructor() {
     super().loadImage("assets/img_pollo_locco/img/2_character_pepe/2_walk/W-21.png");
     this.loadImages(this.IMAGES_WALKING);
@@ -90,6 +107,9 @@ class Character extends MovableObject {
     this.animate();
   }
 
+  /**
+   * Starts the main movement loop at 60 fps and the state update loop at 10 fps.
+   */
   animate() {
     setInterval(() => {
       if (gamePaused) return;
@@ -106,6 +126,9 @@ class Character extends MovableObject {
     }, 100);
   }
 
+  /**
+   * Moves the character left or right based on keyboard input and manages the walking sound.
+   */
   handleMovement() {
     if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
       this.moveRight();
@@ -125,16 +148,25 @@ class Character extends MovableObject {
     }
   }
 
+  /**
+   * Triggers a jump when the space key is pressed and the character is on the ground.
+   */
   handleActions() {
     if (this.world.keyboard.SPACE && !this.isAboveGround()) {
       this.jump();
     }
   }
 
+  /**
+   * Shifts the canvas camera to follow the character's horizontal position.
+   */
   updateCamera() {
     this.world.camera_x = -this.x + 100;
   }
 
+  /**
+   * Selects and plays the appropriate animation based on the character's current state.
+   */
   updateCharacterState() {
     if (this.isDead()) {
       this.playAnimation(this.IMAGES_DEAD);
@@ -156,6 +188,11 @@ class Character extends MovableObject {
     }
   }
 
+  /**
+   * Plays the long-idle (sleep) animation after 4 seconds of inactivity, otherwise plays idle.
+   *
+   * @param {number} timePassed - Seconds elapsed since the last action.
+   */
   playIdleOrSleep(timePassed) {
     if (timePassed >= 4) {
       this.playAnimation(this.IMAGES_LONG_IDLE);
@@ -164,10 +201,18 @@ class Character extends MovableObject {
     }
   }
 
+  /**
+   * Records the current timestamp as the last action time.
+   */
   setNewTimePassed() {
     this.timePassed = new Date().getTime();
   }
 
+  /**
+   * Returns the number of seconds elapsed since the last recorded action.
+   *
+   * @returns {number} Elapsed time in seconds.
+   */
   timePassedSinceLastAction() {
     return (new Date().getTime() - this.timePassed) / 1000;
   }

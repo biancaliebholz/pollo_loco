@@ -1,3 +1,6 @@
+/**
+ * Represents a cloud that scrolls across the background.
+ */
 class Cloud extends MovableObject {
   y = 20;
   height = 250;
@@ -5,6 +8,9 @@ class Cloud extends MovableObject {
 
   IMAGE_CLOUD = 'assets/img_pollo_locco/img/5_background/layers/4_clouds/1.png';
 
+  /**
+   * Initializes the cloud with a random horizontal position and speed.
+   */
   constructor() {
     super().loadImage(this.IMAGE_CLOUD);
     this.x = 100 + Math.random() * 2500;
@@ -12,6 +18,9 @@ class Cloud extends MovableObject {
     this.animate();
   }
 
+  /**
+   * Starts the continuous left-movement animation loop.
+   */
   animate() {
     setInterval(() => {
       this.moveLeft();
@@ -19,6 +28,9 @@ class Cloud extends MovableObject {
     }, 1000 / 60);
   }
 
+  /**
+   * Wraps the cloud back to the right edge once it leaves the left boundary.
+   */
   wrap() {
     if (this.x + this.width < 0) {
       this.x = 3000;

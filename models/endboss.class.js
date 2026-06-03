@@ -1,18 +1,33 @@
+/**
+ * Represents the endboss chicken enemy with walking, alert, attack, hurt, and dead states.
+ */
 class Endboss extends MovableObject {
+  /** @type {number} */
   speedAngry = 2;
+  /** @type {number} */
   speed = 0.15;
+  /** @type {boolean} */
   isDead = false;
+  /** @type {boolean} */
   inDamage = false;
+  /** @type {boolean} */
   isAlert = false;
+  /** @type {boolean} */
   moveLeftAngry = false;
+  /** @type {boolean} */
   aggressive = false;
+  /** @type {boolean} */
   endbossImmune = false;
+  /** @type {number} */
   energyEndboss = 100;
+  /** @type {boolean} */
   otherDirection = false;
   height = 400;
   width = 280;
   y = 60;
+  /** @type {HTMLAudioElement} */
   endbossdead_sound = new Audio('assets/audio/chickenDead2.mp3');
+  /** @type {HTMLAudioElement} */
   alert_sound = new Audio('assets/audio/warning.wav');
 
   offset = {
@@ -63,6 +78,9 @@ class Endboss extends MovableObject {
     'assets/img_pollo_locco/img/4_enemie_boss_chicken/5_dead/G26.png',
   ];
 
+  /**
+   * Loads all animation image sets, sets the initial position, and starts the animation loops.
+   */
   constructor() {
     super().loadImage(this.IMAGES_WALKING[0]);
     this.loadImages(this.IMAGES_WALKING);
@@ -75,6 +93,9 @@ class Endboss extends MovableObject {
     this.animate();
   }
 
+  /**
+   * Sets the inDamage flag briefly to trigger the hurt animation on bottle hit.
+   */
   hitBottleEndboss() {
     this.inDamage = true;
     setTimeout(() => {
@@ -82,6 +103,9 @@ class Endboss extends MovableObject {
     }, 400);
   }
 
+  /**
+   * Reduces endboss energy by 20, increases speed, and checks for death or angry mode.
+   */
   minusEnergyEndboss() {
     if (!this.endbossImmune) {
       this.endbossImmune = true;
@@ -103,6 +127,9 @@ class Endboss extends MovableObject {
     this.checkAngryEndboss();
   }
 
+  /**
+   * Triggers the alert sequence and enables angry movement when energy drops to 20 or below.
+   */
   checkAngryEndboss() {
     if (this.energyEndboss <= 20) {
       this.isAlert = true;
@@ -119,25 +146,40 @@ class Endboss extends MovableObject {
     }
   }
 
+  /**
+   * Moves the endboss left at the angry speed.
+   */
   moveLeftEndbossAngry() {
     this.x -= this.speedAngry;
   }
 
+  /**
+   * Moves the endboss right at the angry speed.
+   */
   moveRightEndbossAngry() {
     this.x += this.speedAngry;
   }
 
+  /**
+   * Sets isDead to true if energy has reached zero.
+   */
   isDeadEndboss() {
     if (this.energyEndboss <= 0) {
       this.isDead = true;
     }
   }
 
+  /**
+   * Starts all animation and movement interval loops.
+   */
   animate() {
     this.setupMovementInterval();
     this.setupStateInterval();
   }
 
+  /**
+   * Starts the 60 fps movement interval, handling both normal and angry movement modes.
+   */
   setupMovementInterval() {
     setInterval(() => {
       if (gamePaused) return;
@@ -163,6 +205,9 @@ class Endboss extends MovableObject {
     }, 1000 / 60);
   }
 
+  /**
+   * Starts the state update interval that selects the correct animation sequence.
+   */
   setupStateInterval() {
     setInterval(() => {
       if (gamePaused) return;
@@ -170,6 +215,9 @@ class Endboss extends MovableObject {
     }, 9000 / 60);
   }
 
+  /**
+   * Selects and plays the correct animation based on the endboss's current state.
+   */
   updateCharacterState() {
     if (this.isDead) {
       this.handleCharacterDead();
@@ -184,6 +232,9 @@ class Endboss extends MovableObject {
     }
   }
 
+  /**
+   * Plays the death animation and sound, then triggers the win screen after a delay.
+   */
   handleCharacterDead() {
     this.playAnimation(this.IMAGES_DEAD);
     playAudio(this.endbossdead_sound);

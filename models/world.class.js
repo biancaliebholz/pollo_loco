@@ -1,26 +1,53 @@
+/**
+ * The main game world that owns all game objects, runs the game loop,
+ * handles collisions, and draws everything onto the canvas each frame.
+ */
 class World {
+  /** @type {Character} */
   character = new Character();
+  /** @type {Level} */
   level = level1;
+  /** @type {MovableObject[]} */
   enemies = level1.enemies;
+  /** @type {Endboss[]} */
   endboss = level1.endboss;
+  /** @type {Cloud[]} */
   clouds = level1.clouds;
+  /** @type {BackgroundObject[]} */
   backgroundObjects = level1.backgroundObjects;
+  /** @type {HTMLCanvasElement} */
   canvas;
+  /** @type {CanvasRenderingContext2D} */
   ctx;
+  /** @type {Keyboard} */
   keyboard;
+  /** @type {number} */
   camera_x = 0;
+  /** @type {StatusBar} */
   statusBar = new StatusBar();
+  /** @type {StatusBarBottle} */
   statusBarBottle = new StatusBarBottle();
+  /** @type {StatusBarCoin} */
   statusBarCoin = new StatusBarCoin();
+  /** @type {StatusBarEndboss} */
   statusBarEndboss = new StatusBarEndboss();
+  /** @type {CollectableCoin[]} */
   collectableCoins = level1.collectableCoins;
+  /** @type {CollectableBottle[]} */
   collectableBottles = level1.collectableBottles;
+  /** @type {Array<{coin: CollectableCoin, index: number}>} */
   addedCoins = [];
+  /** @type {Array<{bottle: CollectableBottle, index: number}>} */
   addedBottles = [];
+  /** @type {ThrowableObject[]} */
   throwableObjects = [];
+  /** @type {boolean} */
   bottleSplash = false;
+  /** @type {HTMLAudioElement} */
   dead_sound = new Audio('assets/audio/chickenDead2.mp3');
+  /** @type {HTMLAudioElement} */
   collectcoin_sound = new Audio('assets/audio/collectSound.wav');
+  /** @type {HTMLAudioElement} */
   collectbottle_sound = new Audio('assets/audio/bottleCollectSound.wav');
 
 

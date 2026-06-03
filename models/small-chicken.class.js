@@ -1,9 +1,13 @@
+/**
+ * Represents a small chicken enemy that walks left and bounces vertically.
+ */
 class Smallchicken extends MovableObject {
   speed = 8;
   speedY = 4;
   y = 360;
   height = 60;
   width = 60;
+  /** @type {boolean} */
   isDead = false;
   offset = {
     left: 10,
@@ -35,11 +39,17 @@ class Smallchicken extends MovableObject {
     this.randomizePosition();
   }
 
+  /**
+   * Sets a random horizontal starting position within the level.
+   */
   randomizePosition() {
     this.x = 300 + Math.random() * 2500;
   }
 
 
+  /**
+   * Bounces the chicken vertically between y=300 and y=360.
+   */
   chickenJump() {
     if (this.y <= 300) {
       this.speedY = Math.abs(this.speedY);
@@ -50,6 +60,9 @@ class Smallchicken extends MovableObject {
     this.y += this.speedY;
   }
 
+  /**
+   * Starts the movement, jump, and sprite animation loops.
+   */
 animate() {
   setInterval(() => {
     if (gamePaused) return;

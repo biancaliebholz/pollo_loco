@@ -1,11 +1,23 @@
+/**
+ * Base class for all objects that can be drawn on the canvas.
+ * Provides image loading, caching, and rendering utilities.
+ */
 class DrawableObject {
+  /** @type {HTMLImageElement} */
   img;
+  /** @type {Object.<string, HTMLImageElement>} */
   imageCache = {};
+  /** @type {number} */
   currentImage = 0;
+  /** @type {number} */
   x = 120;
+  /** @type {number} */
   y = 280;
+  /** @type {number} */
   height = 150;
+  /** @type {number} */
   width = 100;
+  /** @type {Promise<void>[]} */
   static assetsToLoad = [];
 
   /**
@@ -86,6 +98,11 @@ class DrawableObject {
     });
   }
 
+  /**
+   * Wraps an image element in a load/error promise and adds it to the global asset queue.
+   *
+   * @param {HTMLImageElement} img - The image element to track.
+   */
   pushAssetToLoad(img) {
     const promise = new Promise((resolve) => {
       img.onload = resolve;

@@ -1,3 +1,6 @@
+/**
+ * Displays the character's health as a percentage-based status bar.
+ */
 class StatusBar extends DrawableObject {
 
   IMAGES = [
@@ -60,6 +63,9 @@ class StatusBar extends DrawableObject {
   }
 }
 
+/**
+ * Displays the character's bottle count as a percentage-based status bar.
+ */
 class StatusBarBottle extends DrawableObject {
 
   IMAGES = [
@@ -123,6 +129,9 @@ class StatusBarBottle extends DrawableObject {
   }
 }
 
+/**
+ * Displays the character's coin count as a percentage-based status bar.
+ */
 class StatusBarCoin extends DrawableObject {
 
   IMAGES = [
@@ -136,6 +145,9 @@ class StatusBarCoin extends DrawableObject {
   percentageCoin = 0;
 
 
+  /**
+   * Initializes the coin status bar at position (20, 100) with 0%.
+   */
   constructor() {
     super();
     this.loadImages(this.IMAGES);
@@ -183,6 +195,9 @@ class StatusBarCoin extends DrawableObject {
   }
 }
 
+/**
+ * Displays the endboss health as a percentage-based status bar.
+ */
 class StatusBarEndboss extends DrawableObject {
 
   IMAGES = [
@@ -195,7 +210,9 @@ class StatusBarEndboss extends DrawableObject {
   ]
   percentageEndboss = 100;
 
-  
+  /**
+   * Initializes the endboss status bar at position (250, 0) with 100%.
+   */
   constructor() {
     super();
     this.loadImages(this.IMAGES);
@@ -220,10 +237,9 @@ class StatusBarEndboss extends DrawableObject {
 
   
   /**
-   * A description of the entire function.
+   * Returns the image index based on the endboss energy percentage.
    *
-   * @param {type} paramName - description of parameter
-   * @return {type} description of return value
+   * @returns {number} The index of the image corresponding to the current endboss energy.
    */
   resolveImageIndexEndboss() {
     if (this.percentageEndboss == 100) {

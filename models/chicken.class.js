@@ -1,7 +1,11 @@
+/**
+ * Represents a normal-sized chicken enemy that walks left at a random speed.
+ */
 class Chicken extends MovableObject {
   y = 360;
   height = 60;
   width = 60;
+  /** @type {boolean} */
   isDead = false;
 
   offset = {
@@ -21,6 +25,9 @@ class Chicken extends MovableObject {
     'assets/img_pollo_locco/img/3_enemies_chicken/chicken_normal/2_dead/dead.png'
   ];
 
+  /**
+   * Loads images, randomizes position and speed, and starts the animation.
+   */
   constructor() {
     super().loadImage('assets/img_pollo_locco/img/3_enemies_chicken/chicken_normal/1_walk/1_w.png');
     this.loadImages(this.IMAGES_WALKING);
@@ -32,6 +39,9 @@ class Chicken extends MovableObject {
     this.randomizePosition();
   }
 
+  /**
+   * Sets a random horizontal starting position within the level.
+   */
   randomizePosition() {
     this.x = 300 + Math.random() * 2500;
   }
