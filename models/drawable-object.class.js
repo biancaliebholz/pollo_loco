@@ -105,8 +105,10 @@ class DrawableObject {
    */
   pushAssetToLoad(img) {
     const promise = new Promise((resolve) => {
+      // Safari: onload may not fire for already-cached images; check complete first
+      if (img.complete) { resolve(); return; }
       img.onload = resolve;
-      img.onerror = resolve; // Auch bei Fehler weitermachen
+      img.onerror = resolve;
     });
     DrawableObject.assetsToLoad.push(promise);
   }

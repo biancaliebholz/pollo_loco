@@ -309,6 +309,8 @@ function addAudioToLoad(path) {
   const promise = new Promise((resolve) => {
     audio.oncanplaythrough = resolve;
     audio.onerror = resolve;
+    // Safari: canplaythrough fires unreliably; resolve after 3 s as fallback
+    setTimeout(resolve, 3000);
   });
   DrawableObject.assetsToLoad.push(promise);
 }
