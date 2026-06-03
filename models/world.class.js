@@ -112,6 +112,7 @@ class World {
    *
    */
   checkCollisions() {
+    if (gamePaused) return;
     this.checkEnemyCollisions();
     this.checkEndbossCollision();
     this.checkCoinCollisions();
@@ -233,9 +234,10 @@ class World {
    * Checks if any throwable objects are colliding with the endboss and performs the corresponding actions.
    */
  checkEndbossGetHit() {
+  if (gamePaused) return;
   this.throwableObjects.forEach((throwableObject, throwableIndex) => {
     this.level.endboss.forEach((endboss, endbossIndex) => {
-      if (throwableObject.isColliding(endboss)) { 
+      if (throwableObject.isColliding(endboss)) {
         this.handleEndbossCollision(throwableObject, endboss, throwableIndex, endbossIndex);
       }
     });
